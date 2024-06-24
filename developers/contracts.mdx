@@ -1,0 +1,177 @@
+---
+title: 'Contracts'
+description: 'Contract Functionality and Addresses'
+---
+
+## Aethos Service Manager
+The backbone of the Aethos network, the Aethos Service Manager contract
+is responsible for managing the network's operator and staker registry,
+place where developers store their immutable policies and social graph
+configurations, and also serving as a library for signature verification.
+
+<Accordion title="IAethosServiceManager.sol">
+```solidity
+// SPDX-License-Identifier: MIT
+
+pragma solidity =0.8.12;
+
+import {ISignatureUtils} from "eigenlayer-contracts/src/contracts/interfaces/ISignatureUtils.sol";
+import {IDelegationManager} from "eigenlayer-contracts/src/contracts/interfaces/IDelegationManager.sol";
+
+/**
+ * @title Minimal interface for a ServiceManager-type contract that forms the single point for an AVS to push updates to EigenLayer
+ * @author Aethos Labs, Inc
+ */
+interface IServiceManager {
+    /**
+     * @notice Forwards a call to EigenLayer's DelegationManager contract to confirm operator registration with the AVS
+     * @param operatorSigningKey The address of the operator's signing key.
+     * @param operatorSignature The signature, salt, and expiry of the operator's signature.
+     */
+    function registerOperatorToAVS(
+        address operatorSigningKey,
+        ISignatureUtils.SignatureWithSaltAndExpiry memory operatorSignature
+    ) external;
+
+    /**
+     * @notice Returns the list of strategies that the operator has potentially restaked on the AVS
+     * @param operator The address of the operator to get restaked strategies for
+     * @dev This function is intended to be called off-chain
+     * @dev No guarantee is made on whether the operator has shares for a strategy in a quorum or uniqueness
+     *      of each element in the returned array. The off-chain service should do that validation separately
+     */
+    function getOperatorRestakedStrategies(address operator) external view returns (address[] memory);
+
+    /**
+     * @notice Returns the list of strategies that the AVS supports for restaking
+     * @dev This function is intended to be called off-chain
+     * @dev No guarantee is made on uniqueness of each element in the returned array.
+     *      The off-chain service should do that validation separately
+     */
+    function getRestakeableStrategies() external view returns (address[] memory);
+    /**
+     * @notice Deploys a policy with ID with execution rules or parameters for tasks
+     * @param _policyID string pointing to the policy details
+     * @param _policy string containing the policy details
+     * @dev Only callable by service manager deployer
+     * @dev Emits a DeployedPolicy event upon successful deployment
+     */
+    function deployPolicy(string memory _policyID, string memory _policy) external;
+
+    /**
+     * @notice Gets array of deployed policies
+     */
+    function getDeployedPolicies() external view returns (string[] memory);
+
+    /**
+     * @notice Deploys a social graph which clients can use in policy
+     * @param _socialGraphID is a unique identifier
+     * @param _socialGraphConfig is the config for the social graph
+     * @dev Only callable by service manager deployer
+     * @dev Emits a SocialGraphDeployed event upon successful deployment
+     */
+    function deploySocialGraph(string memory _socialGraphID, string memory _socialGraphConfig) external;
+
+    /**
+     * @notice Returns the list of social graph IDs that the AVS supports
+     */
+    function getSocialGraphIDs() external view returns (string[] memory);
+
+    /**
+     * @notice Verifies if a task is authorized by the required number of operators
+     * @param _params Parameters of the task including sender, target, function signature, arguments, quorum count, and expiry block
+     * @param signerAddresses Array of addresses of the operators who signed the task
+     * @param signatures Array of signatures from the operators authorizing the task
+     * @return isVerified Boolean indicating if the task has been verified by the required number of operators
+     * @dev This function checks the signatures against the hash of the task parameters to ensure task authenticity and authorization
+     */
+    function validateSignatures(
+        TaskParams memory _params,
+        address[] memory signerAddresses,
+        bytes[] memory signatures
+    ) external returns (bool isVerified);
+
+    /**
+     * @notice Adds a new strategy to the Service Manager
+     * @dev Only callable by the contract owner. Adds a strategy that operators can stake on.
+     * @param _strategy The address of the strategy contract to add
+     * @param quorumNumber The quorum number associated with the strategy
+     * @param index The index of the strategy within the quorum
+     * @dev Emits a StrategyAdded event upon successful addition of the strategy
+     * @dev Reverts if the strategy does not exist or is already added
+     */
+    function addStrategy(address _strategy, uint8 quorumNumber, uint256 index) external;
+}
+```
+</Accordion>
+
+## Aethos Client
+Deployed by developers who are integrating Aethos, the Aethos Client contract
+is responsible for managing parameters such as thresholds, fee subsidization,
+
+<Accordion title="IAethosClient.sol">
+
+```solidity IAethosClient.sol
+interface IAethosClient {
+    /**
+     * @notice Sets a policy for the calling address, associating it with a policy document stored on IPFS.
+     * @param _policyID A string representing the policyID from on chain.
+     * @dev This function enables clients to define execution rules or parameters for tasks they submit.
+     *      The policy governs how tasks submitted by the caller are executed, ensuring compliance with predefined rules.
+     */
+    function setPolicy(string memory _policyID) external;
+
+    /**
+     * @notice Sets the quorum threshold count required for transaction submission
+     * @param _threshold The number of signatures required to authorize a transaction.
+     * @dev This function allows clients to specify the minimum number of signatures required to approve a task.
+     *      The quorum threshold ensures that tasks are executed only when they have sufficient approval.
+     */
+    function setQuorumThresholdCount(uint32 _threshold) external;
+}
+```
+</Accordion>
+
+## Aethos Treasury
+The Aethos treasury contract is responsible for accruing network fees
+and distributing them to the network participants i.e. operators,
+restkers, and information providers. The treasury contract is also responsible
+for maintaining the network's reserve.
+
+<Accordion title="IAethosTreausry.sol">
+    ```solidity IAethosTreasury.sol
+    interface IAethosTreasury {
+    /**
+     * @notice Distributes network rewards using a Merkle root
+     * @param amount The amount of rewards to distribute
+     * @param merkleRoot The Merkle root used to verify the rewards distribution
+     * @dev This function distributes rewards to network participants based on the Merkle root.
+     */
+    function distributeNetworkRewards(uint256 amount, bytes32 merkleRoot) external;
+
+    /**
+     * @notice Moves funds to a specified address, only callable by governance
+     * @param amount The amount of funds to move
+     * @param recipient The address to receive the funds
+     * @param proposalID The ID of the governance proposal authorizing the fund movement
+     * @dev This function allows the execution of a governance proposal to move funds from the treasury.
+     */
+    function moveFunds(uint256 amount, address recipient, uint256 proposalID) external;
+}
+    ```
+</Accordion>
+
+## Addresses
+**Mainnet**
+
+| Contract Name | Ethereum Address |
+| ------------- | ------- |
+| Aethos Service Manager    | 0x6512451c57612aece27f5292c06b19cdaac03c6b   |
+| Aethos Treasury           | 0x6512451c57612aece27f5292c06b19cdaac03c6b   |
+
+**Testnet**
+
+| Contract Name | Holesky Address |
+| ------------- | ------- |
+| Aethos Service Manager    | 0x6512451c57612aece27f5292c06b19cdaac03c6b   |
+| Aethos Treasury           | 0x6512451c57612aece27f5292c06b19cdaac03c6b   |

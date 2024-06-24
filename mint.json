@@ -5,6 +5,12 @@
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
   },
+    "api": {
+      "baseUrl": "https://api.aethos.network",
+      "auth": {
+        "method": "basic"
+      }
+  },
   "favicon": "/favicon.svg",
   "colors": {
     "primary": "#0D9373",
@@ -25,67 +31,45 @@
     "name": "Dashboard",
     "url": "https://dashboard.mintlify.com"
   },
-  "tabs": [
-    {
-      "name": "API Reference",
-      "url": "api-reference"
-    }
-  ],
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
-    },
-    {
       "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
+      "icon": "x",
+      "url": "https://x.com/aethosnetwork"
     },
     {
       "name": "Blog",
       "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "url": "https://aethos.mirror.xyz"
     }
   ],
   "navigation": [
     {
-      "group": "Get Started",
-      "pages": [
-        "introduction",
-        "quickstart",
-        "development"
-      ]
-    },
-    {
       "group": "Essentials",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        "essentials/introduction",
+        "essentials/quickstart"
       ]
     },
     {
-      "group": "API Documentation",
+      "group": "For Developers",
       "pages": [
-        "api-reference/introduction"
+        "developers/contracts",
+        "developers/integrate"
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "Network Participants",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "operators/operators",
+        "operators/restakers",
+        "operators/middleware"
       ]
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
+    "x": "https://x.com/aethosnetwork",
+    "github": "https://github.com/AethosNetwork",
+    "linkedin": "https://www.linkedin.com/company/aethosnetwork/"
   }
 }
