@@ -5,12 +5,6 @@
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
   },
-    "api": {
-      "baseUrl": "https://api.aethos.network",
-      "auth": {
-        "method": "basic"
-      }
-  },
   "favicon": "/favicon.svg",
   "colors": {
     "primary": "#0D9373",
@@ -31,6 +25,13 @@
     "name": "Dashboard",
     "url": "https://dashboard.mintlify.com"
   },
+  "openapi": ["/api-reference/openapi.json"],
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
   "anchors": [
     {
       "name": "Community",
@@ -61,9 +62,21 @@
     {
       "group": "Network Participants",
       "pages": [
-        "operators/operators",
-        "operators/restakers",
-        "operators/middleware"
+        "participants/operators",
+        "participants/restakers",
+        "participants/middleware"
+      ]
+    },
+    {
+      "group": "API Documentation",
+      "pages": [
+        "api-reference/introduction"
+      ]
+    },
+    {
+      "group": "Endpoint Examples",
+      "pages": [
+        "api-reference/endpoint/post"
       ]
     }
   ],
