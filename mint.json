@@ -2,8 +2,8 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "Starter Kit",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/dark.png",
+    "light": "/logo/light.png"
   },
   "favicon": "/favicon.svg",
   "colors": {
@@ -49,16 +49,8 @@
       "group": "Essentials",
       "pages": [
         "essentials/introduction",
-        "essentials/quickstart"
-      ]
-    },
-    {
-      "group": "For Developers",
-      "pages": [
-        "developers/contracts",
-        "developers/conceptualize",
-        "developers/examples",
-        "developers/dive"
+        "essentials/quickstart",
+        "essentials/design"
       ]
     },
     {
@@ -66,7 +58,22 @@
       "pages": [
         "participants/operators",
         "participants/restakers",
-        "participants/middleware"
+        "participants/providers"
+      ]
+    },
+    {
+      "group": "For Developers",
+      "pages": [
+        "developers/conceptualize",
+        "developers/contracts",
+        "developers/examples",
+        "developers/dive"
+      ]
+    },
+    {
+      "group": "For Operators",
+      "pages": [
+        "operators/start"
       ]
     },
     {

@@ -3,7 +3,7 @@ title: 'Examples'
 description: 'Example integrations with the Aethos Network'
 ---
 
-## Example bridge integration
+## Bridge Integration
 The following examples show code snippets importing the Aethos smart contracts and
 integrating Aethos withing your protocol contracts.
 
@@ -87,7 +87,7 @@ const tx = await bridgeContract.populateTransaction.dispatch(
   await provider.sendTransaction(finalSignedTx);
 ```
 
-## Example DEX integration
+## DEX Integration
 The following example shows how to integrate Aethos with a decentralized exchange. In this example, the DEX contract
 inherits the Aethos Client, a library that provides the necessary functions to interact with the Aethos network.
 

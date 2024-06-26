@@ -3,7 +3,6 @@ title: 'Dive In'
 description: 'Follow these instructions to integrate Aethos into your project.'
 ---
 
-# Dive In
 Today, Aethos supports AML policy using operator maintained, configurable, social graphs.
 The policy you will specify will comprise of which social graph you want to use. Soon, anyone
 will be able to deploy their own social graph, today we have three.
@@ -28,7 +27,6 @@ Aethos into a EVM-based smart contract. Documentation for other use cases are co
                 constructor(address _aethosRegistry) AethosClient(_aethos) {
                     _setAethosRegistry(_aethosRegistry);
                 }
-                // Your protocol's code here
             }
         ```
 
@@ -61,20 +59,19 @@ The following are the steps to integrate Aethos into your front-end using ethers
         import "@aethos/v1/contracts/AethosClient.sol";
 
         contract MyProtocol is AethosClient {
-        constructor(address _aethosRegistry) AethosClient(_aethos) {
-        _setAethosRegistry(_aethosRegistry);
-    }
-        // Your protocol's code here
+            constructor(address _aethosRegistry) AethosClient(_aethos) {
+                _setAethosRegistry(_aethosRegistry);
+            }
     }
         ```
 
     </Step>
     <Step title="Add the AuthorizationParams as the last argument to your desired function and require authorization before any business logic">
         ```solidity
-        function myFunction(uint256 _amount, AuthorizationParams memory _authParams) public {
-        require(
-            authorizeTransaction(msg.data), "Transaction is not Authorized"
-        )
+        function deposit(uint256 _amount, AuthorizationParams memory _authParams) public {
+            require(
+                authorizeTransaction(msg.data), "Transaction is not Authorized"
+            )
     }
         ```
     </Step>
