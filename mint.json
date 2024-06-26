@@ -56,7 +56,9 @@
       "group": "For Developers",
       "pages": [
         "developers/contracts",
-        "developers/integrate"
+        "developers/conceptualize",
+        "developers/examples",
+        "developers/dive"
       ]
     },
     {

@@ -1,0 +1,41 @@
+---
+title: 'Conceptualize'
+description: 'Understand the core concepts of Aethos and how it can be integrated into your project.'
+---
+
+## Framing
+You can think of Aethos as a notary service that can make attestations about anything on or offchain.
+The attestations are specific to the destination protocols policy, you can consider a policy
+as a set of qualifiers the operator is attesting to. These attestations are given to the client
+before they are submitted onchain, where they are verified to belong to a registered notarizer (operator).
+
+## What it Takes
+Integrating Aethos requires you to make two major changes to your project, the first
+on the smart contract level and the second is on your frontend client. The former
+is to integrate the Aethos smart contracts and require signatures on the function-level.
+The latter is to fetch these signatures from Aethos operators.
+
+## How it Works in Your Project
+Aethos supports pretransaction verificatio accross the blockchain stack and particularly on the application level.
+This can be a cross-chain bridge, a DAO, a lending protocol, sequencer, or any other protocol or infrastructure qhich requires
+the need for some pre-transaction rule or condition to be enforced and verified.
+
+
+## Explore
+
+<CardGroup cols={2}>
+    <Card
+        title="Dive In"
+        icon="handshake"
+        href="https://mintlify.com/docs/api-playground/openapi"
+    >
+        Follow this documentation to integrate Aethos into your project.
+    </Card>
+    <Card
+        title="Examples"
+        icon="folder-open"
+        href="./examples"
+    >
+        Explore our examples and get a closer look at what it takes.
+    </Card>
+</CardGroup>

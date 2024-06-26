@@ -1,0 +1,163 @@
+---
+title: 'Examples'
+description: 'Example integrations with the Aethos Network'
+---
+
+## Example bridge integration
+The following examples show code snippets importing the Aethos smart contracts and
+integrating Aethos withing your protocol contracts.
+
+We'll use a cross chain bridge as an example. In the following example, the bridge contract inherits
+the Aethos Client, a library that provides the necessary functions to interact with the Aethos network.
+
+One of these functions is ```authorizeTransactions``` which is used to verify the signatures sent alongside
+the transaction belong to registered Aethos operators.
+
+```solidity Bridge.sol
+
+import {AethosClient} from "@aethos/mixins/AethosClient.sol";
+
+contract Bridge is AethosClient {
+   function dispatch(
+        uint32 destinationDomain,
+        bytes32 recipientAddress,
+        bytes calldata messageBody,
+        bytes calldata metadata,
+        IPostDispatchHook hook,
+        AuthorizationParams calldata authParams
+    ) public payable virtual returns (bytes32) {
+
+        // Invokes the authorizeTransactions function on the Aethos client
+        // which leverages the Aethos service manager to verify signatures
+        require(authorizeTransactions(
+                    msg.data,
+                    destinationDomain,
+                    recipientAddress,
+                    messageBody,
+                    metadata,
+                    authParams),
+            "Unauthorized transaction");
+
+        return _dispatch(destinationDomain, recipientAddress, messageBody, metadata, hook);
+    }
+}
+```
+Aethos operators verify and sign all parameters available within the Ethereum virtaul machine, including the function args. Hence why they
+are included in the authorize Transaction function. If you have a look at the AethosClient you'll notice these arguments are encoded
+and made part of the AethosTaskParams object which is what the operators have signed. The service manager confirms the signatures are authentic
+
+For the front end, here is an excerpt of an example which fetches signatures from the Aethos network for a corresponding
+transaction.
+
+```javascript frontend.js
+const tx = await bridgeContract.populateTransaction.dispatch(
+    destinationDomain,
+    recipientAddress,
+    messageBody,
+    metadata,
+    hook,
+    {
+      expieryBlockNumber: 0,
+      signers: [],
+      signerAddresses: [],
+      taskId: ethers.constants.HashZero
+    }
+  );
+
+  const response = await axios.post("https://api.aethos.network", { transaction: tx });
+  const { expieryBlockNumber, Signers, SignerAddresses, taskId } = response.data;
+
+  const finalTx = await bridgeContract.populateTransaction.dispatch(
+    destinationDomain,
+    recipientAddress,
+    messageBody,
+    metadata,
+    hook,
+    {
+      expieryBlockNumber,
+      signers: Signers,
+      signerAddresses: SignerAddresses,
+      taskId
+    }
+  );
+
+  finalTx.gasLimit = await provider.estimateGas({ ...finalTx, from: wallet.address });
+
+  const finalSignedTx = await wallet.signTransaction(finalTx);
+  await provider.sendTransaction(finalSignedTx);
+```
+
+## Example DEX integration
+The following example shows how to integrate Aethos with a decentralized exchange. In this example, the DEX contract
+inherits the Aethos Client, a library that provides the necessary functions to interact with the Aethos network.
+
+The DEX contract uses the ```authorizeTransactions``` function to verify the signatures sent alongside the transaction
+belong to registered Aethos operators.
+
+```solidity DEX.sol
+import {AethosClient} from "@aethos/mixins/AethosClient.sol";
+
+contract DEX is AethosClient {
+    function swap(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline,
+        AuthorizationParams calldata authParams
+    ) external virtual returns (uint256[] memory amounts) {
+        require(authorizeTransactions(
+                    msg.data,
+                    0,
+                    address(0),
+                    abi.encodePacked(amountIn, amountOutMin, path, to, deadline),
+                    abi.encodePacked("swap"),
+                    authParams),
+            "Unauthorized transaction");
+
+        return _swap(amountIn, amountOutMin, path, to, deadline);
+    }
+}
+```
+
+For the front end, here is an excerpt of an example which fetches signatures from the Aethos network for a corresponding
+transaction.
+
+```javascript frontend.js
+
+const tx = await dexContract.populateTransaction.swap(
+    amountIn,
+    amountOutMin,
+    path,
+    to,
+    deadline,
+    {
+      expieryBlockNumber: 0,
+      signers: [],
+      signerAddresses: [],
+      taskId: ethers.constants.HashZero
+    }
+  );
+
+  const response = await axios.post("https://api.aethos.network", { transaction: tx });
+  const { expieryBlockNumber, Signers, SignerAddresses, taskId } = response.data;
+
+  const finalTx = await dexContract.populateTransaction.swap(
+    amountIn,
+    amountOutMin,
+    path,
+    to,
+    deadline,
+    {
+      expieryBlockNumber,
+      signers: Signers,
+      signerAddresses: SignerAddresses,
+      taskId
+    }
+  );
+
+  finalTx.gasLimit = await provider.estimateGas({ ...finalTx, from: wallet.address });
+
+  const finalSignedTx = await wallet.signTransaction(finalTx);
+  await provider.sendTransaction(finalSignedTx);
+```
